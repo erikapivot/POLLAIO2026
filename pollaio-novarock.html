@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐔 Il Pollaio — Nova Rock 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,500;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0d0d0d;
+    --red: #e8002d;
+    --yellow: #f5c518;
+    --cream: #f0ead6;
+    --grey: #2a2a2a;
+    --mid: #444;
+    --light: #888;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--black);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--red);
+    padding: 2rem 1.5rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '🎸';
+    font-size: 8rem;
+    position: absolute;
+    right: -1rem;
+    top: -1rem;
+    opacity: 0.15;
+    transform: rotate(-15deg);
+  }
+  .tag {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 0.3rem;
+  }
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 12vw, 5rem);
+    line-height: 0.9;
+    color: white;
+    text-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+  }
+  h1 span { color: var(--yellow); }
+  .subtitle {
+    margin-top: 0.8rem;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.8);
+    font-weight: 500;
+  }
+
+  /* COSTS SECTION */
+  .section {
+    padding: 1.5rem;
+    border-bottom: 1px solid #222;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+    color: var(--yellow);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .cost-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+  .cost-card {
+    background: var(--grey);
+    border-radius: 8px;
+    padding: 1rem;
+    border-left: 3px solid var(--red);
+    transition: transform 0.2s;
+  }
+  .cost-card:active { transform: scale(0.97); }
+  .cost-card.yellow { border-left-color: var(--yellow); }
+  .cost-card.green { border-left-color: #4caf50; }
+  .cost-label {
+    font-size: 0.7rem;
+    color: var(--light);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+  .cost-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    color: white;
+    line-height: 1;
+  }
+  .cost-val span { font-size: 1rem; color: var(--light); }
+  .cost-sub { font-size: 0.72rem; color: var(--light); margin-top: 0.2rem; }
+  .total-bar {
+    background: var(--red);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin-top: 0.75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .total-label { font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+  .total-val { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; color: var(--yellow); }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    overflow-x: auto;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem 0.5rem;
+    scrollbar-width: none;
+    background: #111;
+    border-bottom: 2px solid #222;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    white-space: nowrap;
+    background: transparent;
+    border: 1px solid #333;
+    color: var(--light);
+    padding: 0.45rem 1rem;
+    border-radius: 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .tab-btn.active {
+    background: var(--red);
+    border-color: var(--red);
+    color: white;
+    font-weight: 700;
+  }
+
+  /* CHECKLIST */
+  .checklist-panel { display: none; }
+  .checklist-panel.active { display: block; }
+  .category {
+    padding: 1.2rem 1.5rem 0;
+  }
+  .cat-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    color: var(--yellow);
+    margin-bottom: 0.7rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid #1e1e1e;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .item:last-child { border-bottom: none; }
+  .item.done { opacity: 0.4; }
+  .item.done .item-name { text-decoration: line-through; }
+  .checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #444;
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .item.done .checkbox {
+    background: #4caf50;
+    border-color: #4caf50;
+  }
+  .checkmark { display: none; color: white; font-size: 12px; }
+  .item.done .checkmark { display: block; }
+  .item-name { font-size: 0.88rem; line-height: 1.4; }
+  .item-note { font-size: 0.72rem; color: var(--light); display: block; margin-top: 0.1rem; }
+  .warning-tag {
+    font-size: 0.6rem;
+    background: var(--red);
+    color: white;
+    padding: 1px 5px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+    margin-left: 0.3rem;
+    vertical-align: middle;
+  }
+  .tip-tag {
+    font-size: 0.6rem;
+    background: #1a5c2a;
+    color: #7dff9d;
+    padding: 1px 5px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+    margin-left: 0.3rem;
+    vertical-align: middle;
+  }
+
+  /* PROGRESS BAR */
+  .progress-section {
+    padding: 1rem 1.5rem;
+    background: #111;
+    position: sticky;
+    bottom: 0;
+    border-top: 1px solid #222;
+  }
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--light);
+    margin-bottom: 0.4rem;
+  }
+  .progress-bar {
+    height: 6px;
+    background: #333;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--red), var(--yellow));
+    border-radius: 3px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  /* TIPS SECTION */
+  .tips-section { padding: 1.2rem 1.5rem; }
+  .tip-card {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    gap: 0.8rem;
+    align-items: flex-start;
+  }
+  .tip-icon { font-size: 1.5rem; flex-shrink: 0; }
+  .tip-text { font-size: 0.82rem; line-height: 1.5; }
+  .tip-text strong { color: var(--yellow); display: block; margin-bottom: 0.2rem; font-weight: 700; }
+
+  /* VIETATI */
+  .banned-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    padding: 0 1.5rem 1.5rem;
+  }
+  .banned-item {
+    background: #1c0a0a;
+    border: 1px solid #3d0000;
+    border-radius: 6px;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.78rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #ff9999;
+  }
+  .banned-item::before { content: '✕'; color: var(--red); font-weight: 700; font-size: 0.75rem; }
+
+  /* RESET BTN */
+  .reset-btn {
+    background: transparent;
+    border: 1px solid #333;
+    color: var(--light);
+    padding: 0.4rem 0.9rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    margin: 0 1.5rem 1.5rem;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .reset-btn:active { background: #222; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="tag">NOVA ROCK 2026 • PANNONIA FIELDS</div>
+  <h1>IL <span>POL</span>LAIO</h1>
+  <div class="subtitle">🏠 2 Rock Chalet • 👥 5 ragazze + 1 ragazzo • 🤘 Organizzazione totale</div>
+</header>
+
+<!-- COSTS -->
+<div class="section">
+  <div class="section-title">💸 I CONTI DEL POLLAIO</div>
+  <div class="cost-grid">
+    <div class="cost-card">
+      <div class="cost-label">Biglietto × persona</div>
+      <div class="cost-val">€240 <span>/cad</span></div>
+      <div class="cost-sub">× 6 persone = €1.440</div>
+    </div>
+    <div class="cost-card yellow">
+      <div class="cost-label">Chalet × 2 casette</div>
+      <div class="cost-val">€250 <span>/cad</span></div>
+      <div class="cost-sub">€750 ÷ 3 persone cad chalet</div>
+    </div>
+    <div class="cost-card" style="border-left-color:#a78bfa">
+      <div class="cost-label">⚡ Powerstation × 1</div>
+      <div class="cost-val">€89 <span>tot</span></div>
+      <div class="cost-sub">~€15/persona</div>
+    </div>
+    <div class="cost-card green">
+      <div class="cost-label">Totale a testa (fisso)</div>
+      <div class="cost-val">~€505</div>
+      <div class="cost-sub">biglietto + chalet + powerstation</div>
+    </div>
+  </div>
+  <div class="total-bar" style="margin-top:0.75rem">
+    <div>
+      <div class="total-label">⚡ Budget consigliato a testa</div>
+      <div style="font-size:0.72rem;color:rgba(255,255,255,0.7)">+ €100–150 per cibo/bevande/misc</div>
+    </div>
+    <div class="total-val">~€650</div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('comfort')">🛋️ Comfort</button>
+  <button class="tab-btn" onclick="switchTab('pioggia')">🌧️ Pioggia</button>
+  <button class="tab-btn" onclick="switchTab('sole')">☀️ Sole</button>
+  <button class="tab-btn" onclick="switchTab('sopravvivenza')">🎒 Survival</button>
+  <button class="tab-btn" onclick="switchTab('vietati')">🚫 Vietati</button>
+  <button class="tab-btn" onclick="switchTab('tips')">💡 Tips</button>
+</div>
+
+<!-- COMFORT TAB -->
+<div id="tab-comfort" class="checklist-panel active">
+  <div class="category">
+    <div class="cat-title">🏠 Per il Chalet</div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Luci LED a batteria / string lights</span><span class="item-note">atmosfera FONDAMENTALE di notte</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Tappeto / stuoia per l'esterno</span><span class="item-note">per non portare fango dentro</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Materassini gonfiabili extra</span><span class="item-note">+ comodi dei materassi da sacco a pelo</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Cuscini veri (1 a testa)</span><span class="item-note">piccolo lusso, enorme differenza</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Sacco a pelo / coperta</span><span class="item-note">di notte si gela, anche d'estate</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Specchio portatile</span><span class="item-note">uno basta per tutto il pollaio</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Organizer/scatole per tenere ordine</span><span class="item-note">in 3 per casetta diventa presto caos</span></div></div>
+  </div>
+  <div class="category">
+    <div class="cat-title">🔌 Energia</div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Powerstation a noleggio (MAENTUM)<span class="tip-tag">CONSIGLIATO</span></span><span class="item-note">già disponibile sul sito Nova Rock, da prenotare</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Powerbank grande (20.000 mAh) × 2</span><span class="item-note">backup per telefoni</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Ciabatta multi-presa</span><span class="item-note">se avete accesso alla Powerstation</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Cavi vari (USB-C, lightning…)</span><span class="item-note">uno a testa + 2 spare</span></div></div>
+  </div>
+  <div class="category">
+    <div class="cat-title">🍕 Cibo e Bevande (al chalet)</div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Borsa frigo elettrica<span class="tip-tag">CON POWERSTATION</span></span><span class="item-note">funziona ~12h con powerstation noleggiata</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Posate/piatti/bicchieri riutilizzabili</span><span class="item-note">più green + pratici</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Cibo secco: crackers, frutta secca, barrette</span><span class="item-note">colazioni veloci</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Acqua — tante bottiglie</span><span class="item-note">o borraccia (punti acqua gratuiti in loco)</span></div></div>
+  </div>
+  <button class="reset-btn" onclick="resetTab('comfort')">↩ Reset tab</button>
+</div>
+
+<!-- PIOGGIA TAB -->
+<div id="tab-pioggia" class="checklist-panel">
+  <div class="category">
+    <div class="cat-title">🏕️ Setup Telo Ombra/Pioggia<span class="warning-tag">DA FARE!</span></div>
+    <div style="background:#0d1e10;border:1px solid #2d5a3d;border-radius:8px;padding:0.9rem;margin-bottom:0.8rem;font-size:0.8rem;line-height:1.6;color:#a8d5b5;">
+      💡 <strong style="color:#7dff9d">L'idea giusta!</strong> Nella foto del festival si vede un palo con telo teso davanti al chalet — crea una veranda coperta perfetta sia per la pioggia che per il sole. Il vostro chalet base non ce l'ha, quindi tocca a voi costruirla. È semplice e fa una differenza enorme!
+    </div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Pali telescopici da trekking × 2<span class="tip-tag">CHIAVE</span></span><span class="item-note">o tubi PVC da ferramenta — fanno da montanti per la veranda</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Telo impermeabile grande (3×4m o più)<span class="warning-tag">MUST</span></span><span class="item-note">tipo tarp da campeggio — cerca "tarp impermeabile" su Amazon, costa €15–30</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Corda da campeggio / paracord (10–15m)</span><span class="item-note">per tendere il telo tra palo e chalet</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Picchetti da tenda × 6–8</span><span class="item-note">per ancorare il telo al suolo</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Tenditori / moschettoni</span><span class="item-note">per regolare la tensione del telo</span></div></div>
+    <div style="background:#1c1c0a;border:1px solid #4a4a00;border-radius:6px;padding:0.7rem;margin:0.5rem 0;font-size:0.75rem;color:#d4d490;line-height:1.5;">
+      🔧 <strong>Come montare:</strong> Fissa il telo con un lato al tetto/parete del chalet, poi tendi l'altro lato con i pali telescopici piantati nel terreno e corda ancorata con picchetti. Angolo ~30–45° per far scolare la pioggia. Diventa un'area lounge esterna coperta!
+    </div>
+  </div>
+  <div class="category">
+    <div class="cat-title">🌧️ Kit Anti-Fango</div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Stivali di gomma<span class="warning-tag">MUST</span></span><span class="item-note">non negoziabile — la piana diventa palude</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Poncho impermeabile × 6</span><span class="item-note">li vendono anche in loco all'infopoint</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Sacchi per mettere le scarpe fangose</span><span class="item-note">prima di entrare nel chalet</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Asciugamani extra × 2</span><span class="item-note">uno si bagna sempre</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Zaino impermeabile o cover zaino</span><span class="item-note">protegge telefono, portafogli, ecc.</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Sacchetti zip per telefono/valuables</span><span class="item-note">economici e salva-vita</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Telo/telone extra piccolo</span><span class="item-note">per coprire le borse fuori dal chalet</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Calze extra × abbondanza</span><span class="item-note">cambiarle dopo il fango = felicità pura</span></div></div>
+  </div>
+  <button class="reset-btn" onclick="resetTab('pioggia')">↩ Reset tab</button>
+</div>
+
+<!-- SOLE TAB -->
+<div id="tab-sole" class="checklist-panel">
+  <div class="category">
+    <div class="cat-title">☀️ Kit Anti-Caldo</div>
+    <div style="background:#1c1200;border:1px solid #5a3d00;border-radius:8px;padding:0.8rem;margin-bottom:0.8rem;font-size:0.78rem;line-height:1.5;color:#d4a855;">
+      ☀️ Se hai montato il telo della veranda (tab Pioggia), hai già risolto anche il problema sole — il tarp funziona come parasole perfetto! Aggiungici qualche sedia da campeggio sotto e il Pollaio diventa un beach club.
+    </div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Sedie pieghevoli da campeggio × 4–6<span class="tip-tag">VIBES</span></span><span class="item-note">sotto il telo veranda diventano il salotto del pollaio</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Crema solare SPF50 × abbondanza<span class="warning-tag">MUST</span></span><span class="item-note">la piana è piatta, senza ombra — ci si brucia in 20 min</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Cappello / bandana</span><span class="item-note">protezione testa obbligatoria</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Occhiali da sole</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Spray rinfrescante</span><span class="item-note">o spruzzino con acqua — salva dai concerti sotto il sole</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Borraccia grande isolata</span><span class="item-note">acqua fresca tutta la giornata, punti acqua gratuiti</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Vestiti leggeri di ricambio</span><span class="item-note">si suda molto ballando</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Telo da stendere terra × relax</span><span class="item-note">per sdraiarsi tra i concerti</span></div></div>
+  </div>
+  <button class="reset-btn" onclick="resetTab('sole')">↩ Reset tab</button>
+</div>
+
+<!-- SURVIVAL TAB -->
+<div id="tab-sopravvivenza" class="checklist-panel">
+  <div class="category">
+    <div class="cat-title">🎒 L'Essenziale</div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Documento d'identità / passaporto<span class="warning-tag">OBBLIGATORIO</span></span><span class="item-note">confine ungherese a 2 min dal sito</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Cashless band caricato</span><span class="item-note">tutto si paga cashless in loco</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Kit primo soccorso base</span><span class="item-note">cerotti, antidolorifico, disinfettante</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Protezione per le orecchie</span><span class="item-note">distribuiti gratis in loco (Alpine brand)</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">App Nova Rock installata</span><span class="item-note">timetable, mappe, allerte meteo push</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Numero di emergenza salvato: +43 677 619 44 752</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Punto di ritrovo concordato</span><span class="item-note">informatevi sull'infopoint come ref</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Carta igienica / salviette umide</span><span class="item-note">sempre</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Lucchetto piccolo per il chalet</span><span class="item-note">il festival non è responsabile di furti</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Scarpe da ginnastica solide (non infradito)</span><span class="item-note">terreno irregolare = caviglie a rischio</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Tappi per le orecchie per dormire</span><span class="item-note">la musica continua fino alle 6am</span></div></div>
+    <div class="item" onclick="toggle(this)"><div class="checkbox"><span class="checkmark">✓</span></div><div><span class="item-name">Sacchi per la spazzatura</span><span class="item-note">pfand su lattine/bottiglie → €0.25 rimborsato</span></div></div>
+  </div>
+  <button class="reset-btn" onclick="resetTab('sopravvivenza')">↩ Reset tab</button>
+</div>
+
+<!-- VIETATI TAB -->
+<div id="tab-vietati" class="checklist-panel">
+  <div class="tips-section" style="padding-bottom:0.5rem">
+    <div style="font-size:0.82rem;color:#ff9999;margin-bottom:1rem;line-height:1.5;">⚠️ Questi oggetti vengono <strong>confiscati all'ingresso</strong>. Non portarli.</div>
+  </div>
+  <div class="banned-grid">
+    <div class="banned-item">Bombole gas</div>
+    <div class="banned-item">Griglia/bbq</div>
+    <div class="banned-item">Generatori</div>
+    <div class="banned-item">Trockeneis</div>
+    <div class="banned-item">Fuochi d'artificio</div>
+    <div class="banned-item">Armi/coltelli</div>
+    <div class="banned-item">Animali domestici</div>
+    <div class="banned-item">Birrette (casse)</div>
+    <div class="banned-item">Tavolini/panche</div>
+    <div class="banned-item">Biciclette</div>
+    <div class="banned-item">Divani/sperrmüll</div>
+    <div class="banned-item">Selfiestick (sul palco)</div>
+  </div>
+  <div class="tips-section">
+    <div class="tip-card" style="border-color:#1a5c2a;background:#0d1e10">
+      <div class="tip-icon">✅</div>
+      <div class="tip-text"><strong>I padiglioni sono "sconsigliati" ma non vietati</strong>Portate comunque uno piccolo — deve coprire almeno il 50% del vostro chalet e usato da più persone. Perfetto come area ombra/pioggia davanti.</div>
+    </div>
+    <div class="tip-card" style="border-color:#1a5c2a;background:#0d1e10">
+      <div class="tip-icon">🔥</div>
+      <div class="tip-text"><strong>Grill & Chill Area</strong>C'è un'area barbecue ufficiale. Potete portare la vostra roba da grigliare e usare i grill del festival — niente grill personale però.</div>
+    </div>
+  </div>
+</div>
+
+<!-- TIPS TAB -->
+<div id="tab-tips" class="checklist-panel">
+  <div class="tips-section">
+    <div class="tip-card">
+      <div class="tip-icon">🏠</div>
+      <div class="tip-text"><strong>I due chalet vicini o di fronte?</strong>Contattate l'organizzazione per chiedere la disposizione. Se sono uno di fronte all'altro, potete creare un'area comune nel mezzo con un telo/pavillon — il "cortile del pollaio"!</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">💡</div>
+      <div class="tip-text"><strong>Luci LED = game changer</strong>Le string lights a batteria trasformano un chalet base in un posto accogliente. Amazon vende quelle USB a meno di €10. Portate almeno 2 set.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">🔋</div>
+      <div class="tip-text"><strong>Powerstation noleggio</strong>Prenotate la powerstation MAENTUM direttamente dal sito Nova Rock. Permette di caricare tutto e usare la borsa frigo. Costa ma ne vale la pena divisa per 3 per chalet.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">🪣</div>
+      <div class="tip-text"><strong>Pfand = soldi gratis</strong>Raccogliete TUTTE le lattine e bottiglie (anche quelle abbandonate in giro). Ogni contenitore = €0.25 rimborsato sul cashless. In 4 giorni si accumula.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">👟</div>
+      <div class="tip-text"><strong>Scarpe: la vera scelta</strong>Portate 3 paia: stivali di gomma (fango), scarpe da ginnastica robuste (concerti), infradito (dentro chalet e docce). Non scendere mai a compromessi sugli stivali.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">🚿</div>
+      <div class="tip-text"><strong>Docce strategiche</strong>Fate la doccia la mattina presto (7-9am) o tardi la sera per evitare file assurde. I Rock Chalet sono vicini alle strutture sanitarie della zona caravan.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">📱</div>
+      <div class="tip-text"><strong>Punto di ritrovo fisso</strong>Decidete UN posto fisico per trovarvi (tipo l'infopoint). La rete spesso va in saturazione durante i concerti grossi — i messaggi non arrivano.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROGRESS BAR -->
+<div class="progress-section">
+  <div class="progress-header">
+    <span>Checklist completata</span>
+    <span id="progress-text">0 / 0</span>
+  </div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progress-fill"></div>
+  </div>
+</div>
+
+<script>
+  const STORAGE_KEY = 'pollaio_novarock_2026';
+
+  // Assign stable IDs to all items on load
+  function assignItemIds() {
+    document.querySelectorAll('.item').forEach((el, i) => {
+      if (!el.dataset.id) el.dataset.id = 'item_' + i;
+    });
+  }
+
+  // Save current state to localStorage
+  function saveState() {
+    const done = [];
+    document.querySelectorAll('.item.done').forEach(el => {
+      if (el.dataset.id) done.push(el.dataset.id);
+    });
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(done));
+    } catch(e) {}
+  }
+
+  // Load state from localStorage
+  function loadState() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return;
+      const done = JSON.parse(saved);
+      done.forEach(id => {
+        const el = document.querySelector('[data-id="' + id + '"]');
+        if (el) el.classList.add('done');
+      });
+    } catch(e) {}
+  }
+
+  function switchTab(name) {
+    document.querySelectorAll('.checklist-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    const panel = document.getElementById('tab-' + name);
+    if (panel) panel.classList.add('active');
+    event.target.classList.add('active');
+    updateProgress();
+  }
+
+  function toggle(el) {
+    el.classList.toggle('done');
+    saveState();
+    updateProgress();
+  }
+
+  function resetTab(tabName) {
+    const tab = document.getElementById('tab-' + tabName);
+    tab.querySelectorAll('.item.done').forEach(i => i.classList.remove('done'));
+    saveState();
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const allItems = document.querySelectorAll('.item');
+    const doneItems = document.querySelectorAll('.item.done');
+    const total = allItems.length;
+    const done = doneItems.length;
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    document.getElementById('progress-text').textContent = done + ' / ' + total;
+    document.getElementById('progress-fill').style.width = pct + '%';
+  }
+
+  // Init
+  assignItemIds();
+  loadState();
+  updateProgress();
+</script>
+</body>
+</html>
